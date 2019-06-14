@@ -1,0 +1,13 @@
+@import "../../styles/partials/_media-queries";
+
+.banknote {
+  display: flex;
+  background: #f5f5f5;
+  margin: 1% 2.5%;
+  border-radius: 3px;
+  color:#696868;
+
+  &  > div {
+    margin: 2% 2.5%;
+  }
+}
