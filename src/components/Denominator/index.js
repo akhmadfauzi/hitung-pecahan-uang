@@ -7,7 +7,8 @@ class Denominator extends Component {
 	constructor(props) {
 		super(props);
 		this.inputCashHandler = this.inputCashHandler.bind(this);
-		this.state = { bankNotes: null, isInvalid:false }
+		this.onBlurHandler = this.onBlurHandler.bind(this);
+		this.state = { bankNotes: null, isInvalid: false }
 	}
 	denominationCalculator(cash) {
 		let result = {};
@@ -28,14 +29,15 @@ class Denominator extends Component {
 		return result;
 	}
 
-	validator(input){
-		const regex = /^(rp)?\s?(\d+(\.)?){1,}(\,[\d]{2})?$/gi;
+	validator(input) {
+		const regex = /^(rp\s?)?(\d+\.?)(\.?\d{3})*(\,[\d]{2})?$/gi;
+		// console.log(regex.test(input));
 		return regex.test(input);
 	}
-	
-	inputParser(input){
+
+	inputParser(input) {
 		const regex = /(\d|,)+/gi;
-		return input.match(regex).join('').replace(',','.');
+		return input.match(regex).join('').replace(',', '.');
 	}
 
 	inputCashHandler(e) {
@@ -46,19 +48,23 @@ class Denominator extends Component {
 		if (key === 13 && isInputValid) {
 			const value = this.inputParser(target.value);
 			console.log(value);
-			if(value){
+			if (value) {
 				this.setState({ bankNotes: this.denominationCalculator(value) });
-			}else{
+			} else {
 				this.setState({ bankNotes: null });
 			}
-		}else{
-			this.setState({ 
+		} else {
+			this.setState({
 				isInvalid: !isInputValid ? true : false,
 				bankNotes: !isInputValid ? null : this.state.bankNotes
 			});
 		}
 
-		
+
+	}
+
+	onBlurHandler(){
+		this.setState({isInvalid: false});
 	}
 
 	setBanknotes(banknotes) {
@@ -73,13 +79,19 @@ class Denominator extends Component {
 
 
 	render() {
-		const bankNotes = this.state.bankNotes !== null ? this.setBanknotes(this.state.bankNotes) : `<h1>Enter value above...</h1>`;
+		const bankNotes = this.state.bankNotes !== null ? this.setBanknotes(this.state.bankNotes) : <Banknote isEmpty={true} />;
 		const isInvalid = this.state.isInvalid ? 'input-invalid' : '';
 		return (
 			<div className="denomination">
 				<div className="denomination__header">
 					<div className="input-group">
-						<input type="text" className={`${isInvalid}`} onKeyPress={this.inputCashHandler} placeholder="Enter value e.g 10000, Rp. 1000 and press Enter" />
+						<input
+							type="text"
+							className={`${isInvalid}`}
+							onKeyPress={this.inputCashHandler}
+							onBlur={this.onBlurHandler}
+							placeholder="Enter value e.g 10000, Rp. 1000 and press Enter"
+						/>
 					</div>
 				</div>
 				<div className="denomination__body">
