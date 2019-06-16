@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from './components/App';
+import Denominator from './components/Denominator';
 
-ReactDOM.render(<App/>, document.getElementById("root"));
+ReactDOM.render(<Denominator/>, document.getElementById("root"));
 module.hot.accept();

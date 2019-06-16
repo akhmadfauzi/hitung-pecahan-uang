@@ -1,6 +1,6 @@
 # Run
 
-Hitung Pecahan Uang is a simple application.
+Hitung Pecahan Uang is a simple application for displaying denominations based from users input.
 
 ## Installation
 
@@ -25,6 +25,13 @@ Test.
 ```bash
 npm run test
 ```
+
+## Tools
+- [React](https://www.npmjs.com/package/react)
+- [Webpack](http://webpack.js.org/)
+- [Babel](https://babeljs.io/)
+- [Jest (Testing)](https://jestjs.io)
+- [Enzyme (Testing)](https://airbnb.io/enzyme/)
 
 ## License
 [ISC](https://opensource.org/licenses/ISC)
