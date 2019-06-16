@@ -1,0 +1,9 @@
+.box {
+    margin: 2% 0;
+    padding: 2%;
+    border-radius: 3px;
+  &--error {
+    background: #c48e8e !important;
+    color: #fff;
+  }
+}

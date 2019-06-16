@@ -2,15 +2,19 @@ import { hot } from 'react-hot-loader/root';
 import React, { Component } from 'react';
 import Banknote from '../Banknote';
 import BanknoteList from '../BanknoteList';
+import DenominatorInput from '../DenominatorInput';
+import CustomError from '../Error';
+import '../../styles/partials/__global.scss';
 import './denominator.scss';
 
-class Denominator extends Component {
+
+class App extends Component {
 	constructor(props) {
 		super(props);
 		this.inputCashHandler = this.inputCashHandler.bind(this);
 		this.onBlurHandler = this.onBlurHandler.bind(this);
 		this.onFocusHandler = this.onFocusHandler.bind(this);
-		this.state = { bankNotes: null, isValid: false, isFocus: false };
+		this.state = { bankNotes: null, isValid: false, isFocus: false, showError: false };
 	}
 
 	/**
@@ -57,14 +61,13 @@ class Denominator extends Component {
 	 * @default false
 	 */
 	isValid(value) {
-		const basePattern = pattern => new RegExp(`^(Rp\\s?)?${pattern}(\\,)?([\\d]{1,2}|\\-)?$`,'g');
+		const basePattern = pattern => new RegExp(`^(Rp\\s?)?${pattern}(\\,)?([\\d]{1,2}|\\-)?$`, 'g');
 		const pattern1 = basePattern('(\\d{1,3}\\.)(\\.?\\d{3})+');
 		const pattern2 = basePattern('(\\d+)(?!\\.?\\d{3})+');
-		
+
 		const isValidFormat = (pattern1.test(value) || pattern2.test(value));
 
 		return this.isClean(value) ? isValidFormat : false;
-		// return isValidFormat;
 	}
 
 	/**
@@ -76,7 +79,6 @@ class Denominator extends Component {
 	 */
 	inputParser(value) {
 		const regex = /(\d|,)+/gi;
-
 		return value ? value.match(regex).join('').replace(',', '.') : undefined;
 	}
 
@@ -89,16 +91,16 @@ class Denominator extends Component {
 		const target = e.target;
 		const key = e.charCode ? e.charCode : e.keyCode;
 		const isValid = this.isValid(target.value);
-		
-		this.setState({ 
+
+		this.setState({
 			isValid: isValid,
-			bankNotes: !isValid ? null : this.state.bankNotes
+			bankNotes: !isValid ? null : this.state.bankNotes,
+			showError: !isValid
 		});
 
 		if (key === 13 && isValid) {
 			const value = this.inputParser(target.value);
 			if (value) {
-				
 				this.setState({ bankNotes: this.denominationCalculator(value) });
 			} else {
 				this.setState({ bankNotes: null });
@@ -107,13 +109,13 @@ class Denominator extends Component {
 	}
 
 	onBlurHandler() {
-		this.setState({ isFocus: false });
+		this.setState({ isFocus: false, showError: false });
 	}
 
 	onFocusHandler(e) {
 		const target = e.target;
 		const isInputValid = this.isValid(target.value);
-		this.setState({ isFocus: true, isValid: isInputValid });
+		this.setState({ isFocus: true, isValid: isInputValid, showError: !isInputValid });
 	}
 
 	generateBanknotes(banknotes) {
@@ -129,31 +131,33 @@ class Denominator extends Component {
 
 	render() {
 		const store = this.state;
-		const bankNotes = store.bankNotes !== null ? <BanknoteList banknotes={store.bankNotes}/> : <Banknote isEmpty={true} />;
-		const inputClass = !store.isValid && store.isFocus ? 'input-invalid' : '';
+		const bankNotes = store.bankNotes !== null ? <BanknoteList banknotes={store.bankNotes} /> : <Banknote isEmpty={true} />;
+		const content = !store.isValid ? (store.showError ? <CustomError /> : '') : bankNotes;
 		return (
-			<div className="denomination">
-				<div className="denomination__header">
-					<div className="input-group">
-						<input
-							type="text"
-							className={inputClass}
-							onKeyUp={this.inputCashHandler}
-							onBlur={this.onBlurHandler}
-							onFocus={this.onFocusHandler}
-							placeholder="Enter value e.g 10000, Rp. 1000 and press Enter"
-						/>
+			<React.Fragment>
+				<header>
+					Denominator
+				</header>
+				<div className="denomination">
+					<div className="denomination__header">
+						<div className="input-group">
+							<DenominatorInput
+								store={this.state}
+								onKeyUp={this.inputCashHandler}
+								onBlur={this.onBlurHandler}
+								onFocus={this.onFocusHandler}
+							/>
+						</div>
+					</div>
+					<div className="denomination__body">
+						<div className="input-group input-group--no-top-margin">
+							{content}
+						</div>
 					</div>
 				</div>
-				<div className="denomination__body">
-					<div className="input-group">
-						{bankNotes}
-					</div>
-				</div>
-				<h1>{this.state.isValid}</h1>
-			</div>
+			</React.Fragment>
 		);
 	}
 }
 
-export default hot(Denominator);
+export default hot(App);

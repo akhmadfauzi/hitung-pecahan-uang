@@ -1,0 +1,14 @@
+@import "../../styles/partials/_media-queries";
+.input {
+  padding: 4% 2.4%;
+
+  margin: 1% 0;
+  width: 95%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+
+  &--invalid{
+    border: 1px solid #c48e8e !important;
+    outline: none;
+  }
+}

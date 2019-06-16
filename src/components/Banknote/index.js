@@ -9,7 +9,6 @@ const Banknote = props => {
 	return (
 		<div className={bankNoteClass}>
 			<div className="banknote__name">{content}</div>
-			{/* <div className="banknote__val">{}</div> */}
 		</div>
 	);
 };
